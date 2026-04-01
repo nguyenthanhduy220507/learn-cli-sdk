@@ -12,7 +12,7 @@
 
 ### 3. Các thiết lập quan trọng (Bật các dấu tích sau)
 1. **Require a pull request before merging**: 
-   - Không cho phép push trực tiếp vào `main`. 
+   - Không cho phép push trực tiếp vào `main`.  
    - Bắt buộc phải tạo Pull Request (PR).
 2. **Require status checks to pass before merging**: 
    - Đây là bước "gác cổng" CI/CD.
