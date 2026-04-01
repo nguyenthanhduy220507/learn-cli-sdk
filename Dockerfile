@@ -1,43 +1,20 @@
 # ============================================================
-# STAGE 1: BUILD
-# Giai đoạn này có source code, nhưng sẽ KHÔNG được ship
+# KỊCH BẢN 4C: Dockerfile CHỈ CÓ 1 STAGE (SAI LẦM BẢO MẬT)
 # ============================================================
-FROM python:3.11-slim AS builder
-
-WORKDIR /build
-
-# Copy source code vào builder (chỉ tồn tại ở stage này)
-COPY . .
-
-# Cài đặt build tools
-RUN pip install --upgrade pip build
-
-# Build thành file .whl (wheel) - đây là file binary đã đóng gói
-# File .whl KHÔNG chứa source code thô, khó reverse engineer
-RUN python -m build --wheel --outdir /dist
-
-
-# ============================================================
-# STAGE 2: RUNTIME (image cuối cùng ship cho team khác)
-# Giai đoạn này KHÔNG có source code, chỉ có wheel đã compiled
-# ============================================================
-FROM python:3.11-slim AS runtime
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Chỉ copy file .whl từ stage builder (không copy source)
-COPY --from=builder /dist/*.whl /tmp/
+# COPY THẲNG TOÀN BỘ SOURCE CODE VÀO IMAGE (LỖI NẰM Ở ĐÂY!)
+COPY . .
 
-# Cài CLI từ wheel
-RUN pip install /tmp/*.whl && rm /tmp/*.whl
+# Cài đặt trực tiếp từ source
+RUN pip install -e .
 
-# LỖI CỐ TÌNH (KỊCH BẢN 4B): Lệnh không tồn tại sẽ làm Build Job thất bại
-RUN command-not-found-error-scenario-4B
-
-# Tạo user non-root cho bảo mật
+# Tạo user non-root
 RUN useradd -m cliuser
 USER cliuser
 
-# Khi chạy container mà không truyền lệnh, hiện help
+# Entrypoint
 ENTRYPOINT ["mycli"]
 CMD ["--help"]
