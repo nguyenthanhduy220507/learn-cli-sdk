@@ -53,13 +53,15 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
-        run: pip install -e ".[dev]" 2>/dev/null || pip install -e .
+        run: pip install -e .
 
       - name: Run CLI smoke test
+        env:
+          PYTHONIOENCODING: utf-8
         run: |
-          mycli --help
-          mycli hello --name "CI"
-          mycli info --json
+          python -m mycli --help
+          python -m mycli hello --name "CI"
+          python -m mycli info --json
 
   # ------------------------------------------------------------
   # JOB 2: BUILD & PUSH DOCKER IMAGE
