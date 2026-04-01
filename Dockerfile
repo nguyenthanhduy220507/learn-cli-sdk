@@ -1,20 +1,39 @@
 # ============================================================
-# KỊCH BẢN 4C: Dockerfile CHỈ CÓ 1 STAGE (SAI LẦM BẢO MẬT)
+# STAGE 1: BUILD
+# Giai đoạn này có source code, nhưng sẽ KHÔNG được ship
 # ============================================================
-FROM python:3.11-slim
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+
+# Copy source code vào builder (chỉ tồn tại ở stage này)
+COPY . .
+
+# Cài đặt build tools
+RUN pip install --upgrade pip build
+
+# Build thành file .whl (wheel) - đây là file binary đã đóng gói
+RUN python -m build --wheel --outdir /dist
+
+
+# ============================================================
+# STAGE 2: RUNTIME (image cuối cùng ship cho team khác)
+# Giai đoạn này KHÔNG có source code, chỉ có wheel đã compiled
+# ============================================================
+FROM python:3.11-slim AS runtime
 
 WORKDIR /app
 
-# COPY THẲNG TOÀN BỘ SOURCE CODE VÀO IMAGE (LỖI NẰM Ở ĐÂY!)
-COPY . .
+# Chỉ copy file .whl từ stage builder (không copy source)
+COPY --from=builder /dist/*.whl /tmp/
 
-# Cài đặt trực tiếp từ source
-RUN pip install -e .
+# Cài CLI từ wheel
+RUN pip install /tmp/*.whl && rm /tmp/*.whl
 
-# Tạo user non-root
+# Tạo user non-root cho bảo mật
 RUN useradd -m cliuser
 USER cliuser
 
-# Entrypoint
+# Khi chạy container mà không truyền lệnh, hiện help
 ENTRYPOINT ["mycli"]
 CMD ["--help"]
