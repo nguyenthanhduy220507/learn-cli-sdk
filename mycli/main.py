@@ -6,7 +6,16 @@ mycli - IKIGAI AI CLI SDK
 import argparse
 import json
 import sys
+import os
 from datetime import datetime
+
+if sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
@@ -85,29 +94,42 @@ def cmd_process(args):
 def cmd_ask(args):
     """Hỏi đáp với AI qua Gemini"""
     import os
+    import json
+    
+    # 1. Tự động đọc API KEY từ file .env (nếu có)
     try:
-        import google.generativeai as genai
+        from dotenv import load_dotenv
+        load_dotenv()
     except ImportError:
-        console.print("[bold red]Lỗi:[/] Thư viện google-generativeai chưa được cài đặt.")
+        pass
+
+    # 2. Khởi tạo thư viện mới của Google (google-genai)
+    try:
+        from google import genai
+    except ImportError:
+        console.print("[bold red]Lỗi:[/] Thư viện google-genai chưa được cài đặt. Hãy chạy 'pip install -e .'")
         sys.exit(1)
         
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         console.print("[bold red]Lỗi:[/] Thiếu cấu hình GEMINI_API_KEY.")
-        console.print("Vui lòng cấu hình API Key thông qua biến môi trường.")
-        console.print("Ví dụ: [cyan]export GEMINI_API_KEY='your_api_key'[/] hoặc truyền [cyan]-e GEMINI_API_KEY=...[/] nếu dùng Docker.")
+        console.print("Hãy đảm bảo bạn đã điền key vào file .env")
         sys.exit(1)
         
     try:
+        client = genai.Client(api_key=api_key)
+        
         if not args.quiet and not args.json:
             with console.status("[bold cyan]🤖 Đang suy nghĩ...[/]", spinner="dots"):
-                genai.configure(api_key=api_key)
-                model = genai.GenerativeModel('gemini-1.5-flash')
-                response = model.generate_content(args.question)
+                response = client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=args.question,
+                )
         else:
-            genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-1.5-flash')
-            response = model.generate_content(args.question)
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=args.question,
+            )
             
         if args.json:
             print(json.dumps({"question": args.question, "answer": response.text}, ensure_ascii=False, indent=2))
