@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="mycli",
+    name="ikigai",
     version="1.0.4",
     description="Internal CLI SDK by Platform Team",
     packages=find_packages(),
@@ -10,9 +10,9 @@ setup(
         "rich>=13.0.0",
     ],
     entry_points={
-        # Đây là điểm quan trọng: khi install xong, user gõ "mycli" là chạy được
+        # Đã đổi từ mycli thành ikigai
         "console_scripts": [
-            "mycli=mycli.main:main",
+            "ikigai=mycli.main:main",
         ],
     },
 )
