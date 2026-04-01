@@ -1,0 +1,108 @@
+name: Release — Tạo version mới
+
+# Workflow này được trigger THỦ CÔNG từ GitHub UI
+# hoặc bạn có thể gọi từ workflow khác
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Loại version bump"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch   # 1.0.0 → 1.0.1  (bug fix)
+          - minor   # 1.0.0 → 1.1.0  (tính năng mới)
+          - major   # 1.0.0 → 2.0.0  (breaking change)
+      release_notes:
+        description: "Release notes (tóm tắt thay đổi)"
+        required: false
+        default: "Bug fixes and improvements"
+
+jobs:
+  create-release:
+    name: Bump version & create tag
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # Cần quyền tạo tag và release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Cần full history để đọc tag cũ
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Tính version mới
+        id: version
+        run: |
+          # Đọc version hiện tại từ setup.py
+          CURRENT=$(python -c "
+          import re
+          with open('setup.py') as f:
+              content = f.read()
+          m = re.search(r'version=[\"\']([\d.]+)[\"\'.]', content)
+          print(m.group(1) if m else '0.0.0')
+          ")
+          echo "Current version: $CURRENT"
+
+          # Tính version mới
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          BUMP="${{ github.event.inputs.bump }}"
+          if [ "$BUMP" = "major" ]; then
+            NEW="$((MAJOR+1)).0.0"
+          elif [ "$BUMP" = "minor" ]; then
+            NEW="$MAJOR.$((MINOR+1)).0"
+          else
+            NEW="$MAJOR.$MINOR.$((PATCH+1))"
+          fi
+          echo "New version: $NEW"
+          echo "new_version=$NEW" >> $GITHUB_OUTPUT
+          echo "tag=v$NEW" >> $GITHUB_OUTPUT
+
+      - name: Cập nhật version trong setup.py
+        run: |
+          NEW="${{ steps.version.outputs.new_version }}"
+          sed -i "s/version=\"[^\"]*\"/version=\"$NEW\"/" setup.py
+          sed -i "s/__version__ = \"[^\"]*\"/__version__ = \"$NEW\"/" mycli/__init__.py
+          cat setup.py | grep version
+
+      - name: Commit & push version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add setup.py mycli/__init__.py
+          git commit -m "chore: bump version to ${{ steps.version.outputs.new_version }}"
+          git push
+
+      - name: Tạo Git tag
+        run: |
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+      - name: Tạo GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "Release ${{ steps.version.outputs.tag }}"
+          body: |
+            ## 🚀 mycli ${{ steps.version.outputs.tag }}
+
+            ${{ github.event.inputs.release_notes }}
+
+            ### Docker
+            ```bash
+            docker pull ghcr.io/${{ github.repository_owner }}/mycli:${{ steps.version.outputs.new_version }}
+            ```
+
+            ### Sử dụng
+            ```bash
+            docker run --rm ghcr.io/${{ github.repository_owner }}/mycli:${{ steps.version.outputs.new_version }} --help
+            ```
+          draft: false
+          prerelease: false
