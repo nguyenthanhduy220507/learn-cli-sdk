@@ -46,8 +46,9 @@ def cmd_version(args):
 
 def cmd_hello(args):
     """Lệnh chào hỏi cơ bản"""
+    from mycli import __version__
     name = args.name or "World"
-    console.print(Panel(f"[bold green]👋 Hello, {name}![/] Welcome to [bold #d75f5f]IKIGAI AI[/] CLI v1.0.0", border_style="green"))
+    console.print(Panel(f"[bold green]👋 Hello, {name}![/] Welcome to [bold #d75f5f]IKIGAI AI[/] CLI v{__version__}", border_style="green"))
 
 def cmd_info(args):
     """Hiển thị thông tin hệ thống"""
