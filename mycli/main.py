@@ -84,7 +84,7 @@ def cmd_process(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="mycli",
+        prog="ikigai",
         description="🛠  IKIGAI AI - Internal CLI SDK by Platform Team",
         add_help=False
     )
