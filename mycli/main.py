@@ -39,6 +39,11 @@ def show_splash():
     # Uncomment next line if you want real interactive "Press Enter"
     # input()
 
+def cmd_version(args):
+    """Hiển thị version"""
+    from mycli import __version__
+    print(f"mycli v{__version__}")
+
 def cmd_hello(args):
     """Lệnh chào hỏi cơ bản"""
     name = args.name or "World"
