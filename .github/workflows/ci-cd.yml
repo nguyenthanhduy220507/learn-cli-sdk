@@ -86,6 +86,9 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
+            # Giữ nguyên tag gốc (có v1.0.1)
+            type=ref,event=tag
+            # Tạo tag chuẩn semver (1.0.1)
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
