@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="mycli",
-    version="1.0.2",
+    version="1.0.3",
     description="Internal CLI SDK by Platform Team",
     packages=find_packages(),
     python_requires=">=3.8",

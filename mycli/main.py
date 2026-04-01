@@ -51,9 +51,10 @@ def cmd_hello(args):
 
 def cmd_info(args):
     """Hiển thị thông tin hệ thống"""
+    from mycli import __version__
     info = {
         "Tool": "IKIGAI AI CLI",
-        "Version": "1.0.0",
+        "Version": __version__,
         "Python": sys.version.split()[0],
         "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "Team": "IKIGAI Platform Team",
