@@ -36,5 +36,5 @@ RUN useradd -m cliuser
 USER cliuser
 
 # Khi chạy container mà không truyền lệnh, hiện help
-ENTRYPOINT ["mycli"]
+ENTRYPOINT ["ikigai"]
 CMD ["--help"]
