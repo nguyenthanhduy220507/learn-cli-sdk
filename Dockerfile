@@ -31,6 +31,9 @@ COPY --from=builder /dist/*.whl /tmp/
 # Cài CLI từ wheel
 RUN pip install /tmp/*.whl && rm /tmp/*.whl
 
+# LỖI CỐ TÌNH (KỊCH BẢN 4B): Lệnh không tồn tại sẽ làm Build Job thất bại
+RUN command-not-found-error-scenario-4B
+
 # Tạo user non-root cho bảo mật
 RUN useradd -m cliuser
 USER cliuser
