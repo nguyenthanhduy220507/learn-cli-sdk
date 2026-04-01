@@ -6,7 +6,16 @@ mycli - IKIGAI AI CLI SDK
 import argparse
 import json
 import sys
+import os
 from datetime import datetime
+
+if sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
@@ -82,6 +91,57 @@ def cmd_process(args):
         console.print(f"[bold cyan]📂 Output:[/] {args.output}")
         console.print("[bold green]✅ Success![/]")
 
+def cmd_ask(args):
+    """Hỏi đáp với AI qua Gemini"""
+    import os
+    import json
+    
+    # 1. Tự động đọc API KEY từ file .env (nếu có)
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        pass
+
+    # 2. Khởi tạo thư viện mới của Google (google-genai)
+    try:
+        from google import genai
+    except ImportError:
+        console.print("[bold red]Lỗi:[/] Thư viện google-genai chưa được cài đặt. Hãy chạy 'pip install -e .'")
+        sys.exit(1)
+        
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        console.print("[bold red]Lỗi:[/] Thiếu cấu hình GEMINI_API_KEY.")
+        console.print("Hãy đảm bảo bạn đã điền key vào file .env")
+        sys.exit(1)
+        
+    try:
+        client = genai.Client(api_key=api_key)
+        
+        if not args.quiet and not args.json:
+            with console.status("[bold cyan]🤖 Đang suy nghĩ...[/]", spinner="dots"):
+                response = client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=args.question,
+                )
+        else:
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=args.question,
+            )
+            
+        if args.json:
+            print(json.dumps({"question": args.question, "answer": response.text}, ensure_ascii=False, indent=2))
+        elif args.quiet:
+            print(response.text)
+        else:
+            console.print(Panel(response.text, title="🤖 [bold #d75f5f]Gemini AI Answer[/]", border_style="blue"))
+            
+    except Exception as e:
+        console.print(f"[bold red]Lỗi API:[/] {str(e)}")
+        sys.exit(1)
+
 def main():
     parser = argparse.ArgumentParser(
         prog="ikigai",
@@ -106,6 +166,12 @@ def main():
     p_process.add_argument("--input", required=True, help="File đầu vào")
     p_process.add_argument("--output", default="./output", help="Thư mục đầu ra")
 
+    # Command: ask
+    p_ask = subparsers.add_parser("ask", help="Hỏi đáp với trợ lý AI Gemini")
+    p_ask.add_argument("question", help="Câu hỏi của bạn")
+    p_ask.add_argument("--quiet", action="store_true", help="Chỉ in ra câu trả lời thô")
+    p_ask.add_argument("--json", action="store_true", help="Đầu ra định dạng JSON")
+
     args, unknown = parser.parse_known_args()
 
     if args.help or not args.command:
@@ -119,6 +185,8 @@ def main():
         cmd_info(args)
     elif args.command == "process":
         cmd_process(args)
+    elif args.command == "ask":
+        cmd_ask(args)
 
 if __name__ == "__main__":
     main()
