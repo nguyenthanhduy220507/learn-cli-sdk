@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.egg
+dist/
+build/
+.env
+.venv/
+venv/
+.vscode/
+.idea/
+data/
+results/
+docker-compose.override.yml
+C:\Users\ikiga\.gemini\antigravity\brain\
+<<<<<<< SEARCH
+=======
+>>>>>>> REPLACE
