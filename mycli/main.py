@@ -82,6 +82,44 @@ def cmd_process(args):
         console.print(f"[bold cyan]📂 Output:[/] {args.output}")
         console.print("[bold green]✅ Success![/]")
 
+def cmd_ask(args):
+    """Hỏi đáp với AI qua Gemini"""
+    import os
+    try:
+        import google.generativeai as genai
+    except ImportError:
+        console.print("[bold red]Lỗi:[/] Thư viện google-generativeai chưa được cài đặt.")
+        sys.exit(1)
+        
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        console.print("[bold red]Lỗi:[/] Thiếu cấu hình GEMINI_API_KEY.")
+        console.print("Vui lòng cấu hình API Key thông qua biến môi trường.")
+        console.print("Ví dụ: [cyan]export GEMINI_API_KEY='your_api_key'[/] hoặc truyền [cyan]-e GEMINI_API_KEY=...[/] nếu dùng Docker.")
+        sys.exit(1)
+        
+    try:
+        if not args.quiet and not args.json:
+            with console.status("[bold cyan]🤖 Đang suy nghĩ...[/]", spinner="dots"):
+                genai.configure(api_key=api_key)
+                model = genai.GenerativeModel('gemini-1.5-flash')
+                response = model.generate_content(args.question)
+        else:
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            response = model.generate_content(args.question)
+            
+        if args.json:
+            print(json.dumps({"question": args.question, "answer": response.text}, ensure_ascii=False, indent=2))
+        elif args.quiet:
+            print(response.text)
+        else:
+            console.print(Panel(response.text, title="🤖 [bold #d75f5f]Gemini AI Answer[/]", border_style="blue"))
+            
+    except Exception as e:
+        console.print(f"[bold red]Lỗi API:[/] {str(e)}")
+        sys.exit(1)
+
 def main():
     parser = argparse.ArgumentParser(
         prog="ikigai",
@@ -106,6 +144,12 @@ def main():
     p_process.add_argument("--input", required=True, help="File đầu vào")
     p_process.add_argument("--output", default="./output", help="Thư mục đầu ra")
 
+    # Command: ask
+    p_ask = subparsers.add_parser("ask", help="Hỏi đáp với trợ lý AI Gemini")
+    p_ask.add_argument("question", help="Câu hỏi của bạn")
+    p_ask.add_argument("--quiet", action="store_true", help="Chỉ in ra câu trả lời thô")
+    p_ask.add_argument("--json", action="store_true", help="Đầu ra định dạng JSON")
+
     args, unknown = parser.parse_known_args()
 
     if args.help or not args.command:
@@ -119,6 +163,8 @@ def main():
         cmd_info(args)
     elif args.command == "process":
         cmd_process(args)
+    elif args.command == "ask":
+        cmd_ask(args)
 
 if __name__ == "__main__":
     main()
