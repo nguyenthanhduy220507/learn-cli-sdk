@@ -44,6 +44,10 @@ def cmd_version(args):
     from mycli import __version__
     print(f"mycli v{__version__}")
 
+scenario_4A() {
+  echo ""
+  echo "=== 4A: Giả lập syntax error Python ==="
+
 def cmd_hello(args):
     """Lệnh chào hỏi cơ bản"""
     from mycli import __version__
