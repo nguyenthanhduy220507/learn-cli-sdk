@@ -13,7 +13,6 @@ COPY . .
 RUN pip install --upgrade pip build
 
 # Build thành file .whl (wheel) - đây là file binary đã đóng gói
-# File .whl KHÔNG chứa source code thô, khó reverse engineer
 RUN python -m build --wheel --outdir /dist
 
 
