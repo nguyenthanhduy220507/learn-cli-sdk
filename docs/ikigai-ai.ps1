@@ -9,7 +9,7 @@ $ErrorActionPreference = "Stop"
 
 # 1. Cấu hình thông số
 $INSTALL_DIR = Join-Path $HOME ".ikigai"
-$IMAGE_NAME = "ghcr.io/nguyenthanhduy220507/ikigai:latest"
+$IMAGE_NAME = "ghcr.io/nguyenthanhduy220507/learn-cli-sdk:latest"
 $CMD_NAME = "ikigai.bat"
 
 Write-Host "--------------------------------------------------" -ForegroundColor Cyan
