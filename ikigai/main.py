@@ -150,8 +150,12 @@ def main():
     )
     # Customize help to show splash
     parser.add_argument('-h', '--help', action='store_true', help='show this help message and exit')
+    parser.add_argument('-v', '--version', action='store_true', help='show the version and exit')
     
     subparsers = parser.add_subparsers(dest="command")
+
+    # Command: version
+    p_version = subparsers.add_parser("version", help="Hiển thị version")
 
     # Command: hello
     p_hello = subparsers.add_parser("hello", help="Chào hỏi")
@@ -174,6 +178,10 @@ def main():
 
     args, unknown = parser.parse_known_args()
 
+    if args.version:
+        cmd_version(args)
+        sys.exit(0)
+
     if args.help or not args.command:
         show_splash()
         parser.print_help()
@@ -187,6 +195,8 @@ def main():
         cmd_process(args)
     elif args.command == "ask":
         cmd_ask(args)
+    elif args.command == "version":
+        cmd_version(args)
 
 if __name__ == "__main__":
     main()
