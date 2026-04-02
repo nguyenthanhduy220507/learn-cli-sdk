@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ikigai",
-    version="1.0.4",
+    version="1.1.5",
     description="Internal CLI SDK by Platform Team",
     packages=find_packages(),
     python_requires=">=3.8",
