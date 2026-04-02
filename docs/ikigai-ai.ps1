@@ -28,8 +28,8 @@ try {
 # 3. Install/Update IKIGAI CLI
 Write-Host "📦 Installing IKIGAI AI CLI from GitHub..." -ForegroundColor Cyan
 try {
-    # Installing directly from the provided subdirectory in the repo
-    pip install --upgrade "git+https://github.com/nguyenthanhduy220507/learn-cli-sdk.git#subdirectory=src/cli"
+    # Installing directly from the root of the repo
+    pip install --upgrade "git+https://github.com/nguyenthanhduy220507/learn-cli-sdk.git"
     Write-Host "✅ Installation successful!" -ForegroundColor Green
 } catch {
     Write-Host "❌ Installation failed. Please check your internet connection or git installation." -ForegroundColor Red
