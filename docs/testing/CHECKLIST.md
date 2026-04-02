@@ -58,7 +58,7 @@ Cấu trúc log:
 
 ```bash
 # Đặt biến cho tiện
-REGISTRY="ghcr.io/YOUR_ORG/mycli"
+REGISTRY="ghcr.io/YOUR_ORG/ikigai"
 
 # Test case 1 & 3 — confirm image tồn tại
 docker pull $REGISTRY:latest
@@ -72,9 +72,10 @@ docker pull $REGISTRY:1
 
 # Test case 4C — confirm source lộ (dùng để học, KHÔNG làm production)
 docker run --rm --entrypoint sh $REGISTRY:latest \
-  -c "find / -name '*.py' 2>/dev/null | grep -v /usr"
-# Kết quả đúng: không thấy mycli/main.py
-# Kết quả sai:  /app/mycli/main.py ← lộ source!
+  -c "find / -path /usr -prune -o -name '*.py' -print 2>/dev/null" \
+  | grep -v "^/usr" | grep -v "^$" || true
+# Kết quả đúng: không thấy ikigai/main.py
+# Kết quả sai:  /app/ikigai/main.py ← lộ source!
 ```
 
 ---

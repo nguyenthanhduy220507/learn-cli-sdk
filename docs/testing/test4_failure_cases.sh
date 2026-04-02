@@ -24,18 +24,18 @@ scenario_4A() {
   echo "=== 4A: Giả lập syntax error Python ==="
 
   # Thêm syntax lỗi vào main.py
-  cat >> mycli/main.py << 'EOF'
+  cat >> ikigai/main.py << 'EOF'
 
 # LỖI CỐ TÌNH: dấu ngoặc thiếu
 def broken_function(
 EOF
 
-  git add mycli/main.py
+  git add ikigai/main.py
   git commit -m "test(4A): intentional syntax error — expect CI fail at test job"
   git push origin main
 
   echo "Kết quả mong đợi:"
-  echo "  Job 1 (test)           → ❌ FAIL — pip install lỗi hoặc mycli crash"
+  echo "  Job 1 (test)           → ❌ FAIL — pip install lỗi hoặc ikigai crash"
   echo "  Job 2 (build-and-push) → ⏭  SKIPPED (vì job 1 fail)"
   echo "  Job 3 (verify-release) → ⏭  SKIPPED"
   echo ""
@@ -67,7 +67,7 @@ COPY --from=builder /dist/*.whl /tmp/
 # LỖI CỐ TÌNH: lệnh không tồn tại
 RUN this-command-does-not-exist
 RUN pip install /tmp/*.whl && rm /tmp/*.whl
-ENTRYPOINT ["mycli"]
+ENTRYPOINT ["ikigai"]
 CMD ["--help"]
 EOF
 
@@ -109,7 +109,7 @@ COPY . .
 
 RUN pip install --upgrade pip && pip install -e .
 
-ENTRYPOINT ["mycli"]
+ENTRYPOINT ["ikigai"]
 CMD ["--help"]
 EOF
 
@@ -143,10 +143,10 @@ scenario_4D() {
   echo "=== 4D: Giả lập CLI crash khi chạy ==="
 
   # Backup main.py
-  cp mycli/main.py mycli/main.py.bak
+  cp ikigai/main.py ikigai/main.py.bak
 
   # Thêm bug: main() raise Exception ngay lập tức
-  cat > mycli/main.py << 'EOF'
+  cat > ikigai/main.py << 'EOF'
 #!/usr/bin/env python3
 import argparse, sys
 
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     main()
 EOF
 
-  git add mycli/main.py
+  git add ikigai/main.py
   git commit -m "test(4D): CLI crashes on startup — expect CI fail at smoke test"
   git push origin main
 
@@ -167,8 +167,8 @@ EOF
   echo "  Log sẽ in: 'RuntimeError: Lỗi nghiêm trọng giả lập!'"
   echo ""
   echo "Rollback:"
-  echo "  cp mycli/main.py.bak mycli/main.py"
-  echo "  git add mycli/main.py && git commit -m 'fix: restore working main.py'"
+  echo "  cp ikigai/main.py.bak ikigai/main.py"
+  echo "  git add ikigai/main.py && git commit -m 'fix: restore working main.py'"
   echo "  git push origin main"
 }
 

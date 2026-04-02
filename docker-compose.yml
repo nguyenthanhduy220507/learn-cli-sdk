@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  mycli:
+  ikigai:
     # Team khác pull image từ registry nội bộ, không cần build
-    image: registry.internal.company.com/platform/mycli:latest
+    image: registry.internal.company.com/platform/ikigai:latest
 
     # Nếu đang dev local thì dùng dòng này thay thế:
     # build: .

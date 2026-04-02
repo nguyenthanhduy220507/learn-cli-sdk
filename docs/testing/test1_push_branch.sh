@@ -33,4 +33,7 @@ echo "  Job 2 (build-and-push)  → ✅ PASS, image tag: :latest :main"
 echo "  Job 3 (verify-release)  → ⏭  SKIPPED"
 echo ""
 echo "Kiểm tra image đã được push:"
-echo "  docker pull ghcr.io/YOUR_ORG/mycli:latest"
+echo "  docker pull IMAGE="ghcr.io/YOUR_ORG/ikigai:latest"
+docker pull $IMAGE
+docker run --rm $IMAGE --help
+docker run --rm $IMAGE hello --name "Test"
