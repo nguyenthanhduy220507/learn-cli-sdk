@@ -2,18 +2,16 @@ from setuptools import setup, find_packages
 
 setup(
     name="ikigai",
-    version="1.1.5",
-    description="Internal CLI SDK by Platform Team",
+    version="0.2.0",
     packages=find_packages(),
-    python_requires=">=3.8",
     install_requires=[
-        "rich>=13.0.0",
-        "google-genai>=0.1.0",
-        "python-dotenv>=1.0.0",
+        "typer[all]",
+        "rich",
+        "httpx",
     ],
     entry_points={
         "console_scripts": [
-            "ikigai=ikigai.main:main",
+            "ikigai=ikigai.main:app",
         ],
     },
 )
