@@ -250,7 +250,7 @@
             <div id="win-content" class="tab-content active">
                 <div class="command-box">
                     <code
-                        id="winCommand">$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8; irm https://nguyenthanhduy220507.github.io/learn-cli-sdk/ikigai-ai.ps1 | iex</code>
+                        id="winCommand">irm https://nguyenthanhduy220507.github.io/learn-cli-sdk/ikigai-ai.ps1 | iex</code>
                     <button class="copy-btn" onclick="copyCode('winCommand')">Copy</button>
                 </div>
             </div>
@@ -262,6 +262,16 @@
                     <button class="copy-btn" onclick="copyCode('macCommand')">Copy</button>
                 </div>
             </div>
+
+            <style>
+                .key-tab-content {
+                    display: none;
+                }
+
+                .key-tab-content.active {
+                    display: block;
+                }
+            </style>
 
             <div class="steps-grid">
                 <div class="step-item">
@@ -296,6 +306,34 @@
             </div>
         </section>
 
+        <section class="card"
+            style="margin-top: 4rem; background: rgba(175, 202, 49, 0.05); border-color: rgba(175, 202, 49, 0.2);">
+            <h2 style="color: #afca31;">🔑 Configure Gemini API Key</h2>
+            <p>To use AI features, you must set your API Key (get one at <a href="https://aistudio.google.com/"
+                    style="color: #afca31;">AI Studio</a>):</p>
+
+            <div class="tabs" style="margin-top: 1.5rem;">
+                <button class="tab-btn active" onclick="showKeyTab('win-key')">Windows</button>
+                <button class="tab-btn" onclick="showKeyTab('mac-key')">macOS / Linux</button>
+            </div>
+
+            <div id="win-key-content" class="key-tab-content active">
+                <div class="command-box">
+                    <code
+                        id="winKeyCmd">[Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "YOUR_KEY", "User")</code>
+                    <button class="copy-btn" onclick="copyCode('winKeyCmd')" style="background: #afca31;">Copy</button>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-dim);">* Restart PowerShell after running this.</p>
+            </div>
+
+            <div id="mac-key-content" class="key-tab-content">
+                <div class="command-box">
+                    <code id="macKeyCmd">echo 'export GEMINI_API_KEY="YOUR_KEY"' >> ~/.zshrc && source ~/.zshrc</code>
+                    <button class="copy-btn" onclick="copyCode('macKeyCmd')" style="background: #afca31;">Copy</button>
+                </div>
+            </div>
+        </section>
+
         <footer>
             &copy; 2026 IKIGAI Platform Team. Built for speed and security.
         </footer>
@@ -307,6 +345,19 @@
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
             document.getElementById(os + '-content').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showKeyTab(os) {
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                if (b.innerText.toLowerCase().includes(os.split('-')[0])) b.classList.remove('active');
+            });
+            document.querySelectorAll('.key-tab-content').forEach(c => c.classList.remove('active'));
+
+            document.getElementById(os + '-content').classList.add('active');
+            // We need a more robust way to handle multiple tab groups, 
+            // but for now this works since labels are distinct.
+            event.target.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
         }
 
