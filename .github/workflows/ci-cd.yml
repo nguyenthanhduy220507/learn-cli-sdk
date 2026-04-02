@@ -23,7 +23,7 @@ on:
 env:
   # Tên image trên registry
   # Thay "your-org" bằng GitHub username hoặc org của bạn
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/mycli
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/ikigai
 
 # ================================================================
 # CÁC JOBS
@@ -53,9 +53,9 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
         run: |
-          python -m mycli --help
-          python -m mycli hello --name "CI"
-          python -m mycli info --json
+          python -m ikigai --help
+          python -m ikigai hello --name "CI"
+          python -m ikigai info --json
 
   # ------------------------------------------------------------
   # JOB 2: BUILD & PUSH DOCKER IMAGE
@@ -157,7 +157,7 @@ jobs:
           IMAGE="${{ env.IMAGE_NAME }}:${{ github.ref_name }}"
           echo "=== Kiểm tra file .py trong image ==="
           # Tìm file .py - chỉ được phép thấy file của Python runtime
-          # KHÔNG được thấy mycli/main.py hay setup.py
+          # KHÔNG được thấy ikigai/main.py hay setup.py
           LEAKED=$(docker run --rm --entrypoint sh "$IMAGE" \
             -c "find / -path /usr -prune -o -name '*.py' -print 2>/dev/null" \
             | grep -v "^/usr" | grep -v "^$" || true)
