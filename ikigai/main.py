@@ -37,11 +37,11 @@ IKIGAI_ASCII = """
 def show_splash():
     """Hiển thị splash screen phong cách IKIGAI AI"""
     # Header box similar to Claude Code
-    header_text = Text("Welcome to IKIGAI AI", style="bold white on #d75f5f")
-    console.print(Align.center(Panel(header_text, border_style="#d75f5f", padding=(0, 2))))
+    header_text = Text("Welcome to IKIGAI AI", style="bold white on #afca31")
+    console.print(Align.center(Panel(header_text, border_style="#afca31", padding=(0, 2))))
     
     # Large Logo
-    logo = Text(IKIGAI_ASCII, style="#d75f5f")
+    logo = Text(IKIGAI_ASCII, style="#afca31")
     console.print(Align.center(logo))
     
     console.print(Align.center(Text("Press Enter to continue...", style="dim italic blue")))
@@ -57,7 +57,7 @@ def cmd_hello(args):
     """Lệnh chào hỏi cơ bản"""
     from ikigai import __version__
     name = args.name or "World"
-    console.print(Panel(f"[bold green]👋 Hello, {name}![/] Welcome to [bold #d75f5f]IKIGAI AI[/] CLI v{__version__}", border_style="green"))
+    console.print(Panel(f"[bold green]👋 Hello, {name}![/] Welcome to [bold #afca31]IKIGAI AI[/] CLI v{__version__}", border_style="green"))
 
 def cmd_info(args):
     """Hiển thị thông tin hệ thống"""
@@ -73,7 +73,7 @@ def cmd_info(args):
     if args.json:
         console.print(json.dumps(info, indent=2))
     else:
-        table = Table(title="[bold #d75f5f]System Information[/]", border_style="#d75f5f")
+        table = Table(title="[bold #afca31]System Information[/]", border_style="#afca31")
         table.add_column("Property", style="bold cyan")
         table.add_column("Value", style="white")
         
@@ -136,7 +136,7 @@ def cmd_ask(args):
         elif args.quiet:
             print(response.text)
         else:
-            console.print(Panel(response.text, title="🤖 [bold #d75f5f]Gemini AI Answer[/]", border_style="blue"))
+            console.print(Panel(response.text, title="🤖 [bold #afca31]Gemini AI Answer[/]", border_style="blue"))
             
     except Exception as e:
         console.print(f"[bold red]Lỗi API:[/] {str(e)}")
