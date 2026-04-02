@@ -11,9 +11,9 @@ on:
         default: "patch"
         type: choice
         options:
-          - patch   # 1.0.0 → 1.0.1  (bug fix)
-          - minor   # 1.0.0 → 1.1.0  (tính năng mới)
-          - major   # 1.0.0 → 2.0.0  (breaking change)
+          - patch # 1.0.0 → 1.0.1  (bug fix)
+          - minor # 1.0.0 → 1.1.0  (tính năng mới)
+          - major # 1.0.0 → 2.0.0  (breaking change)
       release_notes:
         description: "Release notes (tóm tắt thay đổi)"
         required: false
@@ -25,13 +25,13 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write   # Cần quyền tạo tag và release
+      contents: write # Cần quyền tạo tag và release
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # Cần full history để đọc tag cũ
+          fetch-depth: 0 # Cần full history để đọc tag cũ
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -69,14 +69,14 @@ jobs:
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
           sed -i "s/version=\"[^\"]*\"/version=\"$NEW\"/" setup.py
-          sed -i "s/__version__ = \"[^\"]*\"/__version__ = \"$NEW\"/" mycli/__init__.py
+          sed -i "s/__version__ = \"[^\"]*\"/__version__ = \"$NEW\"/" ikigai/__init__.py
           cat setup.py | grep version
 
       - name: Commit & push version bump
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add setup.py mycli/__init__.py
+          git add setup.py ikigai/__init__.py
           git commit -m "chore: bump version to ${{ steps.version.outputs.new_version }}"
           git push
 
@@ -91,18 +91,18 @@ jobs:
           tag_name: ${{ steps.version.outputs.tag }}
           name: "Release ${{ steps.version.outputs.tag }}"
           body: |
-            ## 🚀 mycli ${{ steps.version.outputs.tag }}
+            ## 🚀 ikigai ${{ steps.version.outputs.tag }}
 
             ${{ github.event.inputs.release_notes }}
 
             ### Docker
             ```bash
-            docker pull ghcr.io/${{ github.repository_owner }}/mycli:${{ steps.version.outputs.new_version }}
+            docker pull ghcr.io/${{ github.repository_owner }}/ikigai:${{ steps.version.outputs.new_version }}
             ```
 
             ### Sử dụng
             ```bash
-            docker run --rm ghcr.io/${{ github.repository_owner }}/mycli:${{ steps.version.outputs.new_version }} --help
+            docker run --rm ghcr.io/${{ github.repository_owner }}/ikigai:${{ steps.version.outputs.new_version }} --help
             ```
           draft: false
           prerelease: false

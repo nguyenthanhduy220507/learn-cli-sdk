@@ -14,7 +14,7 @@ setup(
     entry_points={
         # Đã đổi từ mycli thành ikigai
         "console_scripts": [
-            "ikigai=mycli.main:main",
+            "ikigai=ikigai.main:main",
         ],
     },
 )

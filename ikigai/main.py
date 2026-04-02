@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-mycli - IKIGAI AI CLI SDK
+ikigai - IKIGAI AI CLI SDK
 """
 
 import argparse
@@ -50,18 +50,18 @@ def show_splash():
 
 def cmd_version(args):
     """Hiển thị version"""
-    from mycli import __version__
-    print(f"mycli v{__version__}")
+    from ikigai import __version__
+    print(f"ikigai v{__version__}")
 
 def cmd_hello(args):
     """Lệnh chào hỏi cơ bản"""
-    from mycli import __version__
+    from ikigai import __version__
     name = args.name or "World"
     console.print(Panel(f"[bold green]👋 Hello, {name}![/] Welcome to [bold #d75f5f]IKIGAI AI[/] CLI v{__version__}", border_style="green"))
 
 def cmd_info(args):
     """Hiển thị thông tin hệ thống"""
-    from mycli import __version__
+    from ikigai import __version__
     info = {
         "Tool": "IKIGAI AI CLI",
         "Version": __version__,

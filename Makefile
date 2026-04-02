@@ -1,7 +1,7 @@
 # Makefile - Các lệnh thường dùng trong quá trình dev & release
 
 REGISTRY   = registry.internal.company.com
-IMAGE_NAME = platform/mycli
+IMAGE_NAME = platform/ikigai
 VERSION    = 1.0.0
 FULL_IMAGE = $(REGISTRY)/$(IMAGE_NAME):$(VERSION)
 LATEST     = $(REGISTRY)/$(IMAGE_NAME):latest
@@ -10,7 +10,7 @@ LATEST     = $(REGISTRY)/$(IMAGE_NAME):latest
 
 ## Chạy CLI trực tiếp trên máy (không qua Docker, cần có Python)
 run:
-	python -m mycli.main $(ARGS)
+	python -m ikigai.main $(ARGS)
 
 ## Cài CLI vào máy local để dev
 install-dev:
@@ -18,9 +18,9 @@ install-dev:
 
 ## Test thử các lệnh
 test-local:
-	mycli hello --name Developer
-	mycli info
-	mycli info --json
+	ikigai hello --name Developer
+	ikigai info
+	ikigai info --json
 
 # ─── DOCKER ─────────────────────────────────────────────────
 
