@@ -44,9 +44,9 @@ echo "Tag sẽ tạo: $NEW_TAG"
 
 # Cập nhật version trong code
 sed -i "s/version=\"$CURRENT_VERSION\"/version=\"$NEW_VERSION\"/" setup.py
-sed -i "s/__version__ = \"$CURRENT_VERSION\"/__version__ = \"$NEW_VERSION\"/" mycli/__init__.py
+sed -i "s/__version__ = \"$CURRENT_VERSION\"/__version__ = \"$NEW_VERSION\"/" ikigai/__init__.py
 
-git add setup.py mycli/__init__.py
+git add setup.py ikigai/__init__.py
 git commit -m "chore: bump version to $NEW_VERSION"
 git push origin main
 
@@ -65,14 +65,14 @@ echo "  Job 2 (build-and-push)  → ✅ PASS"
 echo "  Job 3 (verify-release)  → ✅ PASS (chạy vì có git tag)"
 echo ""
 echo "Docker tags được tạo:"
-echo "  ghcr.io/YOUR_ORG/mycli:$NEW_VERSION"
-echo "  ghcr.io/YOUR_ORG/mycli:$MAJOR.$MINOR"
-echo "  ghcr.io/YOUR_ORG/mycli:$MAJOR"
-echo "  ghcr.io/YOUR_ORG/mycli:latest"
+echo "  ghcr.io/YOUR_ORG/ikigai:$NEW_VERSION"
+echo "  ghcr.io/YOUR_ORG/ikigai:$MAJOR.$MINOR"
+echo "  ghcr.io/YOUR_ORG/ikigai:$MAJOR"
+echo "  ghcr.io/YOUR_ORG/ikigai:latest"
 echo ""
 echo "Kiểm tra thủ công sau khi pipeline xong:"
-echo "  docker pull ghcr.io/YOUR_ORG/mycli:$NEW_VERSION"
-echo "  docker run --rm ghcr.io/YOUR_ORG/mycli:$NEW_VERSION info --json"
+echo "  docker pull ghcr.io/YOUR_ORG/ikigai:$NEW_VERSION"
+echo "  docker run --rm ghcr.io/YOUR_ORG/ikigai:$NEW_VERSION info --json"
 
 echo ""
 echo "--- Cách B: Dùng workflow release.yml (khuyến nghị hơn) ---"

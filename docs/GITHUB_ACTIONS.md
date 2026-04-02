@@ -17,9 +17,9 @@
 ```
 push code  →  [test]  →  [build-and-push]  →  [verify-release]*
                  ↓              ↓                      ↓
-           mycli --help    docker buildx          docker pull
-           mycli hello     multi-platform         test image
-           mycli info      push to ghcr.io        check source leak
+           ikigai --help    docker buildx          docker pull
+           ikigai hello     multi-platform         test image
+           ikigai info      push to ghcr.io        check source leak
                            cache layers
 
 * verify-release chỉ chạy khi tạo git tag
@@ -41,7 +41,7 @@ Vào GitHub → Actions → "Release" → "Run workflow" → chọn `patch/minor
 Workflow tự động:
 1. Đọc version hiện tại từ `setup.py`
 2. Tính version mới (1.0.0 → 1.0.1)
-3. Cập nhật `setup.py` và `mycli/__init__.py`
+3. Cập nhật `setup.py` và `ikigai/__init__.py`
 4. Commit + push
 5. Tạo git tag `v1.0.1`
 6. Tạo GitHub Release với hướng dẫn docker pull
@@ -53,7 +53,7 @@ Workflow tự động:
 git init
 git add .
 git commit -m "feat: initial CLI SDK"
-git remote add origin https://github.com/YOUR_ORG/mycli.git
+git remote add origin https://github.com/YOUR_ORG/ikigai.git
 git push -u origin main
 
 # 2. Vào Settings → Actions → General
@@ -70,9 +70,9 @@ git push -u origin main
 
 ```bash
 # Pull image công khai (nếu repo public)
-docker pull ghcr.io/YOUR_ORG/mycli:latest
+docker pull ghcr.io/YOUR_ORG/ikigai:latest
 
 # Nếu repo private, cần login trước
 echo $GITHUB_PAT | docker login ghcr.io -u USERNAME --password-stdin
-docker pull ghcr.io/YOUR_ORG/mycli:latest
+docker pull ghcr.io/YOUR_ORG/ikigai:latest
 ```

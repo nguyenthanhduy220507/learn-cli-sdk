@@ -12,7 +12,6 @@ setup(
         "python-dotenv>=1.0.0",
     ],
     entry_points={
-        # Đã đổi từ mycli thành ikigai
         "console_scripts": [
             "ikigai=ikigai.main:main",
         ],
