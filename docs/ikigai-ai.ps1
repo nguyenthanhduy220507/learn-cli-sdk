@@ -1,59 +1,52 @@
-# <IKIGAI AI CLI> Installer for Windows
-# GitHub Repo: https://github.com/nguyenthanhduy220507/learn-cli-sdk
+# IKIGAI AI CLI Installer for Windows
+# This script installs the IKIGAI CLI globally using pip.
+# Usage (One-liner): 
+# irm https://nguyenthanhduy220507.github.io/learn-cli-sdk/ikigai-ai.ps1 | iex
 
 $ErrorActionPreference = "Stop"
 
-# 1. Variables
-$INSTALL_DIR = Join-Path $HOME ".ikigai"
-$IMAGE_NAME = "ghcr.io/nguyenthanhduy220507/learn-cli-sdk:latest"
-$CMD_NAME = "ikigai.bat"
+Write-Host "🚀 Starting IKIGAI AI CLI Installation..." -ForegroundColor Cyan
 
-Write-Host "--------------------------------------------------" -ForegroundColor Cyan
-Write-Host "   IKIGAI AI CLI SDK - Windows Installer" -ForegroundColor Cyan
-Write-Host "--------------------------------------------------" -ForegroundColor Cyan
-
-# 2. Create Installation Directory
-if (-not (Test-Path $INSTALL_DIR)) {
-    Write-Host "[*] Creating installation directory at: $INSTALL_DIR" -ForegroundColor Gray
-    New-Item -ItemType Directory -Path $INSTALL_DIR | Out-Null
+# 1. Check for Python
+try {
+    $pythonVersion = python --version 2>$null
+    Write-Host "✅ Found Python: $pythonVersion" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Python not found. Please install Python 3.8+ from https://www.python.org/" -ForegroundColor Red
+    exit 1
 }
 
-# 3. Create ikigai.bat (Wrapper)
-$BAT_PATH = Join-Path $INSTALL_DIR $CMD_NAME
-$BAT_CONTENT = @"
-@echo off
-rem IKIGAI AI CLI Wrapper
-rem Automatically pull the latest image
-docker pull $IMAGE_NAME > nul 2>&1
-
-docker run --rm -it ^
-  -v "%cd%:/data" ^
-  -w "/data" ^
-  -e GEMINI_API_KEY=%GEMINI_API_KEY% ^
-  $IMAGE_NAME %*
-"@
-
-Write-Host "[*] Creating wrapper file at: $BAT_PATH" -ForegroundColor Gray
-Set-Content -Path $BAT_PATH -Value $BAT_CONTENT
-
-# 4. Add to PATH
-$currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
-if ($currentPath -notlike "*$INSTALL_DIR*") {
-    Write-Host "[*] Adding $INSTALL_DIR to Path environment variable..." -ForegroundColor Yellow
-    [Environment]::SetEnvironmentVariable("Path", "$currentPath;$INSTALL_DIR", "User")
-    Write-Host "[+] Successfully added to Path!" -ForegroundColor Green
-} else {
-    Write-Host "[i] Installation directory is already in Path." -ForegroundColor Gray
+# 2. Check for Pip
+try {
+    $pipVersion = pip --version 2>$null
+    Write-Host "✅ Found Pip" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Pip not found. Please ensure Pip is installed with Python." -ForegroundColor Red
+    exit 1
 }
 
-# 5. Pull the Image
-Write-Host "[*] Pulling the latest CLI image from registry..." -ForegroundColor Cyan
-docker pull $IMAGE_NAME
+# 3. Install/Update IKIGAI CLI
+Write-Host "📦 Installing IKIGAI AI CLI from GitHub..." -ForegroundColor Cyan
+try {
+    # Installing directly from the provided subdirectory in the repo
+    pip install --upgrade "git+https://github.com/nguyenthanhduy220507/learn-cli-sdk.git#subdirectory=src/cli"
+    Write-Host "✅ Installation successful!" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Installation failed. Please check your internet connection or git installation." -ForegroundColor Red
+    exit 1
+}
 
-Write-Host "--------------------------------------------------" -ForegroundColor Green
-Write-Host "✅ INSTALLATION COMPLETED!" -ForegroundColor Green
-Write-Host "--------------------------------------------------" -ForegroundColor Green
-Write-Host "NOTES:" -ForegroundColor Yellow
-Write-Host "1. Please RESTART your Terminal for the 'ikigai' command to take effect."
-Write-Host "2. Ensure Docker Desktop is running."
-Write-Host "--------------------------------------------------"
+# 4. Verify Installation
+Write-Host "🔍 Verifying installation..." -ForegroundColor Cyan
+try {
+    $version = ikigai --version
+    Write-Host "✨ $version is ready to use!" -ForegroundColor Magenta
+    Write-Host "`nTo get started, run:"
+    Write-Host "  ikigai info" -ForegroundColor Yellow
+    Write-Host "  ikigai login" -ForegroundColor Yellow
+} catch {
+    Write-Host "⚠️  Installation complete, but 'ikigai' command not found in PATH." -ForegroundColor Yellow
+    Write-Host "Please restart your terminal or add the Python scripts folder to your PATH." -ForegroundColor Gray
+}
+
+Write-Host "`n🚀 Welcome to the future of AI infrastructure!" -ForegroundColor Green
