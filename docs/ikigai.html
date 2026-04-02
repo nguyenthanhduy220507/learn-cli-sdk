@@ -218,7 +218,7 @@
 
             <div class="command-box">
                 <code
-                    id="installCommand">Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://nguyenthanhduy220507.github.io/learn-cli-sdk/ikigai-ai.ps1'))</code>
+                    id="installCommand">irm https://nguyenthanhduy220507.github.io/learn-cli-sdk/ikigai-ai.ps1 | iex</code>
                 <button class="copy-btn" onclick="copyCode()">Copy</button>
             </div>
 
