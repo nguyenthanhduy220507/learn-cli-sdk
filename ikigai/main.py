@@ -1,4 +1,5 @@
 import asyncio
+import json
 import typer
 from typing import Optional
 from ikigai import __version__
@@ -42,13 +43,31 @@ def login(
         print_error(str(e))
 
 @app.command()
-def info():
+def hello(name: str = typer.Option("World", "--name", help="Name to greet.")):
+    """Say hello (legacy compatibility command)."""
+    console.print(f"Hello, {name}!")
+
+@app.command()
+def info(json_output: bool = typer.Option(False, "--json", help="Output status in JSON format.")):
     """Display system and connection information."""
-    show_splash()
     try:
         status = asyncio.run(client.get_status())
         main_status = status.get("status", "unknown")
         is_online = main_status in ["healthy", "ok"]
+
+        if json_output:
+            payload = {
+                "status": "online" if is_online else "offline",
+                "raw_status": main_status,
+                "version": "1.0.0",
+                "environment": status.get("environment", "unknown"),
+                "endpoint": client.base_url,
+                "services": status.get("services", {}),
+            }
+            console.print(json.dumps(payload, ensure_ascii=False))
+            return
+
+        show_splash()
         
         rows = [
             ["Status", "[green]Online" if is_online else f"[red]Offline ({main_status})"],
@@ -68,6 +87,9 @@ def info():
             console.print(svc_table)
             
     except Exception as e:
+        if json_output:
+            console.print(json.dumps({"error": str(e), "endpoint": client.base_url}, ensure_ascii=False))
+            return
         print_error(f"Could not connect to the IKIGAI platform: {e}")
 
 @app.command()
