@@ -41,9 +41,13 @@ Write-Host "🔍 Verifying installation..." -ForegroundColor Cyan
 try {
     $version = ikigai --version
     Write-Host "✨ $version is ready to use!" -ForegroundColor Magenta
-    Write-Host "`nTo get started, run:"
-    Write-Host "  ikigai info" -ForegroundColor Yellow
-    Write-Host "  ikigai login" -ForegroundColor Yellow
+    Write-Host "`n✨ Cài đặt hoàn tất! Để bắt đầu, hãy thực hiện các bước sau:" -ForegroundColor Magenta
+    Write-Host "1. Cấu hình kết nối tới Server:" -ForegroundColor White
+    Write-Host "   ikigai config server http://172.16.111.225:8000" -ForegroundColor Yellow
+    Write-Host "2. Kiểm tra trạng thái hệ thống:" -ForegroundColor White
+    Write-Host "   ikigai info" -ForegroundColor Yellow
+    Write-Host "3. Đăng nhập:" -ForegroundColor White
+    Write-Host "   ikigai login" -ForegroundColor Yellow
 } catch {
     Write-Host "⚠️  Installation complete, but 'ikigai' command not found in PATH." -ForegroundColor Yellow
     Write-Host "Please restart your terminal or add the Python scripts folder to your PATH." -ForegroundColor Gray
