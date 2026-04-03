@@ -6,9 +6,10 @@ from typing import Optional, AsyncGenerator
 
 CONFIG_DIR = Path.home() / ".ikigai"
 CONFIG_FILE = CONFIG_DIR / "config.json"
+DEFAULT_SERVER_URL = "http://localhost:8000"
 
 class IkigaiClient:
-    def __init__(self, base_url: str = "http://localhost:8000"):
+    def __init__(self, base_url: str = DEFAULT_SERVER_URL):
         self.base_url = base_url.rstrip("/")
         self.token: Optional[str] = None
         self._load_config()
@@ -17,13 +18,24 @@ class IkigaiClient:
         if CONFIG_FILE.exists():
             try:
                 data = json.loads(CONFIG_FILE.read_text())
+                self.base_url = data.get("base_url", self.base_url).rstrip("/")
                 self.token = data.get("token")
             except Exception:
                 pass
 
     def _save_config(self):
         CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-        CONFIG_FILE.write_text(json.dumps({"token": self.token}))
+        CONFIG_FILE.write_text(
+            json.dumps({"base_url": self.base_url, "token": self.token}, ensure_ascii=False)
+        )
+
+    def set_server(self, base_url: str):
+        normalized = (base_url or "").strip().rstrip("/")
+        if not normalized.startswith("http://") and not normalized.startswith("https://"):
+            raise ValueError("Server URL must start with http:// or https://")
+        self.base_url = normalized
+        self._save_config()
+        return self.base_url
 
     @property
     def headers(self):

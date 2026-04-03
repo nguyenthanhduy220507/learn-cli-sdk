@@ -11,7 +11,10 @@ from rich.text import Text
 from rich.markdown import Markdown
 
 app = typer.Typer(help="🛠  IKIGAI AI - Internal CLI SDK by Platform Team")
+config_app = typer.Typer(help="Configure IKIGAI CLI settings.")
 client = IkigaiClient()
+
+app.add_typer(config_app, name="config")
 
 def version_callback(value: bool):
     if value:
@@ -46,6 +49,16 @@ def login(
 def hello(name: str = typer.Option("World", "--name", help="Name to greet.")):
     """Say hello (legacy compatibility command)."""
     console.print(f"Hello, {name}!")
+
+@config_app.command("server")
+def config_server(base_url: str):
+    """Set backend server URL used by CLI commands."""
+    try:
+        saved_url = client.set_server(base_url)
+        print_success(f"Server URL configured: [bold]{saved_url}[/]")
+    except ValueError as e:
+        print_error(str(e))
+        raise typer.Exit(code=2)
 
 @app.command()
 def info(json_output: bool = typer.Option(False, "--json", help="Output status in JSON format.")):
